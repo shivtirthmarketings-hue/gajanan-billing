@@ -8,10 +8,18 @@ RUN pip3 install reportlab pandas
 COPY . /app
 WORKDIR /app
 
-# S6 Init script banva jya dware GUI startup la app run hoil
-RUN mkdir -p /custom-cont-init.d && \
-    echo '#!/bin/bash\n\
-sleep 5\n\
-export DISPLAY=:1\n\
-python3 /app/gajanan_clinic_app.py &' > /custom-cont-init.d/start_app.sh && \
-    chmod +x /custom-cont-init.d/start_app.sh
+# 1. Custom S6 Service Setup
+RUN mkdir -p /custom-services.d
+RUN echo '#!/usr/bin/with-contenv bash\n\
+exec s6-setuidgid abc bash -c "sleep 8 && export DISPLAY=:1 && cd /app && python3 /app/gajanan_clinic_app.py"' > /custom-services.d/gajanan-app && \
+    chmod +x /custom-services.d/gajanan-app
+
+# 2. Backup Desktop Autostart Shortcut
+RUN mkdir -p /config/.config/autostart
+RUN echo '[Desktop Entry]\n\
+Type=Application\n\
+Exec=bash -c "sleep 5 && export DISPLAY=:1 && cd /app && python3 /app/gajanan_clinic_app.py"\n\
+Hidden=false\n\
+NoDisplay=false\n\
+X-GNOME-Autostart-enabled=true\n\
+Name=Gajanan Billing' > /config/.config/autostart/gajanan.desktop
