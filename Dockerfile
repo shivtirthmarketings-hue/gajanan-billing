@@ -1,12 +1,11 @@
 FROM linuxserver/webtop:ubuntu-mate
 
-# Install Python & Dependencies
-RUN apt-get update && apt-get install -y python3 python3-pip
-RUN pip3 install PyQt5 reportlab pandas
+RUN apt-get update && apt-get install -y python3 python3-pip python3-pyqt5
+RUN pip3 install reportlab pandas
 
-# Copy application files
 COPY . /app
 WORKDIR /app
 
-# Run app on startup
-RUN echo "python3 /app/gajanan_clinic_app.py &" >> /defaults/autostart
+# Display setup ani app launch command
+RUN echo "export DISPLAY=:1" >> /defaults/autostart && \
+    echo "python3 /app/gajanan_clinic_app.py &" >> /defaults/autostart
