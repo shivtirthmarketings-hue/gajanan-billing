@@ -1,0 +1,12 @@
+FROM linuxserver/webtop:ubuntu-mate
+
+# Install Python & Dependencies
+RUN apt-get update && apt-get install -y python3 python3-pip
+RUN pip3 install PyQt5 reportlab pandas
+
+# Copy application files
+COPY . /app
+WORKDIR /app
+
+# Run app on startup
+echo "python3 main.py &" >> /defaults/autostart

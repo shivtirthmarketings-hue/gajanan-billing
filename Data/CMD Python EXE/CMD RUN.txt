@@ -1,0 +1,1 @@
+python -m PyInstaller --noconsole --onefile --hidden-import=PyQt5 gajanan_clinic_app.py
