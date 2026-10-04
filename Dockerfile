@@ -8,22 +8,10 @@ RUN pip3 install reportlab pandas
 COPY . /app
 WORKDIR /app
 
-# MATE Desktop session autostart configuration
-RUN mkdir -p /config/.config/autostart
-RUN echo '[Desktop Entry]\n\
-Type=Application\n\
-Exec=python3 /app/gajanan_clinic_app.py\n\
-Hidden=false\n\
-NoDisplay=false\n\
-X-GNOME-Autostart-enabled=true\n\
-Name=Gajanan Billing\n\
-Comment=Start Gajanan Clinic Billing App' > /config/.config/autostart/gajanan.desktop
-
-# Desktop shortcut (Manual Backup sathi)
-RUN mkdir -p /config/Desktop
-RUN echo '[Desktop Entry]\n\
-Type=Application\n\
-Exec=python3 /app/gajanan_clinic_app.py\n\
-Name=Gajanan Billing\n\
-Icon=utilities-terminal\n\
-Terminal=false' > /config/Desktop/gajanan.desktop && chmod +x /config/Desktop/gajanan.desktop
+# S6 Init script banva jya dware GUI startup la app run hoil
+RUN mkdir -p /custom-cont-init.d && \
+    echo '#!/bin/bash\n\
+sleep 5\n\
+export DISPLAY=:1\n\
+python3 /app/gajanan_clinic_app.py &' > /custom-cont-init.d/start_app.sh && \
+    chmod +x /custom-cont-init.d/start_app.sh
